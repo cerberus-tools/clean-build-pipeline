@@ -42,4 +42,24 @@ pipeline {
             }
         }
     }
+    post {
+        success {
+            script {
+                def review_message = "Selected clean builds has been triggered on ${env.BUILD_URL}"
+                sh "echo \"{'message': '${review_message}'}\"| ssh ${env.GERRIT_HOST} gerrit review ${env.GERRIT_PATCHSET_REVISION} -j"
+            }
+        }
+        failure {
+            script {
+                def review_message = "Selected clean builds has been triggered on ${env.BUILD_URL}"
+                sh "echo \"{'message': '${review_message}'}\"| ssh ${env.GERRIT_HOST} gerrit review ${env.GERRIT_PATCHSET_REVISION} -j"
+            }
+        }
+        aborted {
+            script {
+                def review_message = "Aborted: Trigger clean builds on ${env.BUILD_URL}"
+                sh "echo \"{'message': '${review_message}'}\"| ssh ${env.GERRIT_HOST} gerrit review ${env.GERRIT_PATCHSET_REVISION} -j"
+            }
+        }
+    }
 }
